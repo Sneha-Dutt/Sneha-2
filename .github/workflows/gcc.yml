@@ -22,6 +22,7 @@ jobs:
         mkdir -p build
         cd build
         echo "Looking for .cpp files in ../"
+        ls -l ../  # List files in the parent directory for debugging
         if ls ../*.cpp 1> /dev/null 2>&1; then
           g++ -Wall -Wextra -o program ../*.cpp -lgtest -lgtest_main -pthread > compile_output.log 2>&1
         else
