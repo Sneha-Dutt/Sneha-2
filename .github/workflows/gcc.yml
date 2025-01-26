@@ -24,7 +24,7 @@ jobs:
           if [ $? -ne 0 ]; then exit 1; fi  # Fail if compilation fails
 
       - name: Upload Compilation Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: compile-artifacts
           path: ./test_addition  # Adjust path for your compiled artifact
