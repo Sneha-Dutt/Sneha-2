@@ -15,4 +15,4 @@ add_executable(test_addition test_addition.cpp addition.cpp)
 target_link_libraries(test_addition gtest gtest_main)
 
 # Add tests
-add_test(NAME AdditionTest COMMAND runTests)
+add_test(NAME AdditionTest COMMAND test_addition)
