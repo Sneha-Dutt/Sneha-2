@@ -58,20 +58,24 @@ jobs:
         cmake .
         sudo make install
 
-    # Build the project and run unit tests
+    # Build the project and run unit tests with detailed output
     - name: Build and run unit tests
       run: |
         mkdir build
         cd build
         cmake ..
         make
-        ./runTest > unit_test_report.txt 2>&1
+        ./runTest --gtest_output=xml:unit_test_report.xml || exit $?
+
+    # Display unit test results for debugging
+    - name: Display unit test results
+      run: |
         echo "Unit Test Results:"
-        cat unit_test_report.txt  # Display the output for debugging
+        cat build/unit_test_report.xml
 
     # Upload unit test result logs as an artifact
     - name: Upload unit test log
       uses: actions/upload-artifact@v4
       with:
         name: unit-test-report
-        path: build/unit_test_report.txt
+        path: build/unit_test_report.xml
