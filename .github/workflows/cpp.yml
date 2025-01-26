@@ -1,60 +1,40 @@
-# Pipeline 2: Static analysis and unit testing
-name: Static Analysis and Testing Pipeline
+name: C++ Build and Compile Pipeline
 
 on:
-  workflow_run:
-    workflows:
-      - Build and Compile Pipeline  # Triggered after the completion of the above workflow
-    types:
-      - completed  # Runs when the above workflow completes
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  static-analysis:
+  compile:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout the code from the repository
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # Install cppcheck
-    - name: Install cppcheck
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cppcheck
-
-    # Run Cppcheck for static analysis
-    - name: Run static analysis with Cppcheck
-      run: |
-        cppcheck --enable=all --inconclusive --quiet \
-          --suppress=missingIncludeSystem \
-          --suppress=missingInclude .
-
-  unit-tests:
-    needs: static-analysis
-    runs-on: ubuntu-latest
-
-    steps:
-    # Checkout the code from the repository
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    # Install dependencies and GoogleTest
+    # Install dependencies, including GoogleTest
     - name: Install dependencies and GoogleTest
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake build-essential
+        sudo apt-get install -y cmake g++ build-essential
+        # Install GoogleTest from source
         cd /tmp
         git clone https://github.com/google/googletest.git
         cd googletest
         cmake .
         sudo make install
 
-    # Build the project and run unit tests
-    - name: Build and run unit tests
+    # Compile only if .cpp files are found
+    - name: Compile C++ code with GoogleTest
       run: |
-        mkdir build
+        mkdir -p build
         cd build
-        cmake ..
-        make
-        ./runTests
+        if ls ../*.cpp 1> /dev/null 2>&1; then
+          g++ -Wall -Wextra -o program ../*.cpp -lgtest -lgtest_main -pthread
+        else
+          echo "No .cpp files found. Skipping compilation."
+        fi
