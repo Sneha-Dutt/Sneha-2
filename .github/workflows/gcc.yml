@@ -39,23 +39,18 @@ jobs:
         ls -l ../  # List files in the parent directory for debugging
         if ls ../*.cpp 1> /dev/null 2>&1; then
           echo "Compiling C++ code..."
+          # Redirect both stdout and stderr to the log file
           g++ -v -Wall -Wextra -o program ../*.cpp -lgtest -lgtest_main -pthread > compile_output.log 2>&1
           echo "Compilation completed. Here is the output:"
-          cat compile_output.log  # Display the log content
+          cat compile_output.log  # Display the log content for debugging
         else
           echo "No .cpp files found. Skipping compilation." > compile_output.log
         fi
 
-    # Check if compile_output.log exists before uploading
-    - name: Upload compilation log (if exists)
-      run: |
-        if [ -f build/compile_output.log ]; then
-          echo "Uploading compilation log..."
-          # Upload the log file as an artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: compilation-log
-            path: build/compile_output.log
-        else
-          echo "No compilation log found. Skipping upload."
-        fi
+    # Upload compilation logs as artifacts, whether successful or not
+    - name: Upload compilation log
+      if: always()  # This ensures the artifact is uploaded even if the previous step fails
+      uses: actions/upload-artifact@v4
+      with:
+        name: compilation-log
+        path: build/compile_output.log
