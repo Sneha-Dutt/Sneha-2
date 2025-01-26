@@ -2,7 +2,7 @@
 #include "addNumbers.h"
 
 TEST(AddNumbersTest, AddPositiveNumbers) {
-    EXPECT_EQ(add(3, 4), 9);
+    EXPECT_EQ(add(3, 4), 7);
 }
 
 TEST(AddNumbersTest, AddNegativeNumbers) {
