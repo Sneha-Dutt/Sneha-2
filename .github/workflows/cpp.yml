@@ -2,11 +2,12 @@
 name: Static Analysis and Testing Pipeline
 
 on:
-  workflow_run:
-    workflows:
-      - Build and Compile Pipeline  # Triggered after the completion of the above workflow
-    types:
-      - completed  # Runs when the above workflow completes
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   static-analysis:
