@@ -17,4 +17,4 @@ add_executable(runTests testToAddTwoNumbers.cpp addNumbers.cpp)
 target_link_libraries(runTests GTest::GTest GTest::Main)
 
 # Add tests
-add_test(NAME AddNumbersTest COMMAND runTests)
+add_test(NAME AddNumbersTest COMMAND runTest)
