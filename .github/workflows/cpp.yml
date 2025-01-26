@@ -55,8 +55,3 @@ jobs:
           make
           ./test_addition  # Adjust with your actual test executable name
 
-      - name: Upload Test Results as Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: ./build/test_results.xml

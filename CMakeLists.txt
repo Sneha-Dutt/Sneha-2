@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 
 project(AdditionTest)
 
+# Enable testing
+enable_testing()
+
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 14)
 
