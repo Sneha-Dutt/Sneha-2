@@ -46,9 +46,16 @@ jobs:
           echo "No .cpp files found. Skipping compilation." > compile_output.log
         fi
 
-    # Upload compilation logs as artifacts (using v4)
-    - name: Upload compilation log
-      uses: actions/upload-artifact@v4
-      with:
-        name: compilation-log
-        path: build/compile_output.log
+    # Check if compile_output.log exists before uploading
+    - name: Upload compilation log (if exists)
+      run: |
+        if [ -f build/compile_output.log ]; then
+          echo "Uploading compilation log..."
+          # Upload the log file as an artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: compilation-log
+            path: build/compile_output.log
+        else
+          echo "No compilation log found. Skipping upload."
+        fi
