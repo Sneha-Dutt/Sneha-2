@@ -23,10 +23,13 @@ jobs:
         cd build
         echo "Looking for .cpp files in ../"
         ls -l ../  # List files in the parent directory for debugging
-        if ls ../*.cpp 1> /dev/null 2>&1; then
-          g++ -Wall -Wextra -o program ../*.cpp -lgtest -lgtest_main -pthread > compile_output.log 2>&1
-        else
+        # Compile all the .cpp files explicitly listed
+        cpp_files=$(ls ../*.cpp)
+        if [ -z "$cpp_files" ]; then
           echo "No .cpp files found. Skipping compilation." > compile_output.log
+        else
+          echo "Compiling the following files: $cpp_files"
+          g++ -Wall -Wextra -o program $cpp_files -lgtest -lgtest_main -pthread > compile_output.log 2>&1
         fi
         # Print the log in case of an error
         cat compile_output.log
