@@ -65,4 +65,13 @@ jobs:
         cd build
         cmake ..
         make
-        ./runTest
+        ./runTest > unit_test_report.txt 2>&1
+        echo "Unit Test Results:"
+        cat unit_test_report.txt  # Display the output for debugging
+
+    # Upload unit test result logs as an artifact
+    - name: Upload unit test log
+      uses: actions/upload-artifact@v4
+      with:
+        name: unit-test-report
+        path: build/unit_test_report.txt
