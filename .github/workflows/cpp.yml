@@ -1,40 +1,60 @@
-name: C++ Build and Compile Pipeline
+# Pipeline 2: Static analysis and unit testing
+name: Static Analysis and Testing Pipeline
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows:
+      - Build and Compile Pipeline  # Triggered after the completion of the above workflow
+    types:
+      - completed  # Runs when the above workflow completes
 
 jobs:
-  compile:
+  static-analysis:
     runs-on: ubuntu-latest
 
     steps:
+    # Checkout the code from the repository
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # Install dependencies, including GoogleTest
+    # Install cppcheck
+    - name: Install cppcheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cppcheck
+
+    # Run Cppcheck for static analysis
+    - name: Run static analysis with Cppcheck
+      run: |
+        cppcheck --enable=all --inconclusive --quiet \
+          --suppress=missingIncludeSystem \
+          --suppress=missingInclude .
+
+  unit-tests:
+    needs: static-analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Install dependencies and GoogleTest
     - name: Install dependencies and GoogleTest
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake g++ build-essential
-        # Install GoogleTest from source
+        sudo apt-get install -y cmake build-essential
         cd /tmp
         git clone https://github.com/google/googletest.git
         cd googletest
         cmake .
         sudo make install
 
-    # Compile only if .cpp files are found
-    - name: Compile C++ code with GoogleTest
+    # Build the project and run unit tests
+    - name: Build and run unit tests
       run: |
-        mkdir -p build
+        mkdir build
         cd build
-        if ls ../*.cpp 1> /dev/null 2>&1; then
-          g++ -Wall -Wextra -o program ../*.cpp -lgtest -lgtest_main -pthread
-        else
-          echo "No .cpp files found. Skipping compilation."
-        fi
+        cmake ..
+        make
+        ./runTests
