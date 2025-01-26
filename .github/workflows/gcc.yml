@@ -1,3 +1,13 @@
+name: Build and Compile Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   compile:
     runs-on: ubuntu-latest
@@ -19,4 +29,3 @@ jobs:
           gcc -Wall -Wextra -o program ../*.c
         else
           echo "No .c files found. Skipping compilation."
-        fi

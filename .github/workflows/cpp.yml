@@ -4,9 +4,9 @@ name: Static Analysis and Testing Pipeline
 on:
   workflow_run:
     workflows:
-      - Build and Compile Pipeline
+      - Build and Compile Pipeline  # Triggered after the completion of the above workflow
     types:
-      - completed
+      - completed  # Runs when the above workflow completes
 
 jobs:
   static-analysis:
