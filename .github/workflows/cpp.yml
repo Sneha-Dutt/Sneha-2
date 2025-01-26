@@ -1,0 +1,62 @@
+name: Static Analysis with Cppcheck and Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  cppcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install cppcheck
+        run: sudo apt-get install -y cppcheck
+
+      - name: Run cppcheck Static Analysis
+        run: cppcheck --enable=all --inconclusive --xml --xml-version=2 . 2> cppcheck-report.xml
+
+      - name: Upload Cppcheck Report as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: cppcheck-report
+          path: cppcheck-report.xml
+
+  unit-test:
+    runs-on: ubuntu-latest
+    needs: cppcheck  # Ensure cppcheck runs first
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies for GoogleTest
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ make
+
+      - name: Set up GoogleTest
+        run: |
+          git clone https://github.com/google/googletest.git
+          cd googletest
+          cmake CMakeLists.txt
+          make
+          sudo make install
+
+      - name: Run Unit Tests with GoogleTest
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+          ./test_addition  # Adjust with your actual test executable name
+
+      - name: Upload Test Results as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: ./build/test_results.xml

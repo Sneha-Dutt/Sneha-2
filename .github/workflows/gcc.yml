@@ -1,0 +1,30 @@
+name: Compile Code with GCC
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install GCC
+        run: sudo apt-get install -y gcc
+
+      - name: Compile Code with GCC and List Warnings
+        run: |
+          gcc -Wall -Wextra -o test_addition addition.cpp  # Replace with your files
+          if [ $? -ne 0 ]; then exit 1; fi  # Fail if compilation fails
+
+      - name: Upload Compilation Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: compile-artifacts
+          path: ./test_addition  # Adjust path for your compiled artifact
