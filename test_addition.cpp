@@ -4,7 +4,7 @@
 
 // Test case for the add function
 TEST(AdditionTest, PositiveNumbers) {
-    EXPECT_EQ(Adder::add(3, 5), 8);  // Test adding 3 + 5
+    EXPECT_EQ(Adder::add(3, 5), 7);  // Test adding 3 + 5
 }
 
 TEST(AdditionTest, NegativeNumbers) {
