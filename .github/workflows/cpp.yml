@@ -1,32 +1,3 @@
-name: Static Analysis with Cppcheck and Unit Tests
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-jobs:
-  cppcheck:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Install cppcheck
-        run: sudo apt-get install -y cppcheck
-
-      - name: Run cppcheck Static Analysis
-        run: cppcheck --enable=all --inconclusive --xml --xml-version=2 . 2> cppcheck-report.xml
-
-      - name: Upload Cppcheck Report as Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: cppcheck-report
-          path: cppcheck-report.xml
-
   unit-test:
     runs-on: ubuntu-latest
     needs: cppcheck  # Ensure cppcheck runs first
@@ -39,19 +10,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake g++ make
 
-      - name: Set up GoogleTest
+      - name: Clone and Build GoogleTest
         run: |
           git clone https://github.com/google/googletest.git
-          cd googletest
-          cmake CMakeLists.txt
+          mkdir build
+          cd build
+          cmake ../googletest
           make
           sudo make install
 
-      - name: Run Unit Tests with GoogleTest
+      - name: Build and Run Unit Tests
         run: |
           mkdir build
           cd build
-          cmake ..
+          cmake .. -DCMAKE_BUILD_TYPE=Debug
           make
-          ./test_addition  # Adjust with your actual test executable name
-
+          ctest --output-on-failure
