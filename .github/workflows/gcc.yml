@@ -16,7 +16,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # Install dependencies, including GoogleTest
+    # Install dependencies, including GoogleTest or else compilation will fail for 
     - name: Install dependencies and GoogleTest
       run: |
         sudo apt-get update
