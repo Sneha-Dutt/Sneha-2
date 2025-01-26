@@ -1,4 +1,4 @@
-name: Build and Compile Pipeline
+name: C++ Build and Compile Pipeline
 
 on:
   push:
@@ -20,12 +20,13 @@ jobs:
     - name: List project files
       run: ls -R
 
-    # Compile only if .c files are found
-    - name: Compile code
+    # Compile only if .cpp files are found
+    - name: Compile C++ code
       run: |
         mkdir -p build
         cd build
-        if ls ../*.c 1> /dev/null 2>&1; then
-          gcc -Wall -Wextra -o program ../*.c
+        if ls ../*.cpp 1> /dev/null 2>&1; then
+          g++ -Wall -Wextra -o program ../*.cpp
         else
-          echo "No .c files found. Skipping compilation."
+          echo "No .cpp files found. Skipping compilation."
+        fi
