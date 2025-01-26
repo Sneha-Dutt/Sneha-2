@@ -16,26 +16,34 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    # Install dependencies, including GoogleTest or else compilation will fail
+    - name: Install dependencies and GoogleTest
+      run: |
+        echo "Installing dependencies..."
+        sudo apt-get update
+        sudo apt-get install -y cmake g++ build-essential
+        # Install GoogleTest from source
+        cd /tmp
+        git clone https://github.com/google/googletest.git
+        cd googletest
+        cmake .
+        sudo make install
+
     # Compile only if .cpp files are found
     - name: Compile C++ code with GoogleTest
       run: |
+        echo "Creating build directory..."
         mkdir -p build
         cd build
-        echo "Looking for .cpp files in ../"
+        echo "Looking for .cpp files..."
         ls -l ../  # List files in the parent directory for debugging
-        # Compile all the .cpp files explicitly listed
-        cpp_files=$(ls ../*.cpp)
-        if [ -z "$cpp_files" ]; then
-          echo "No .cpp files found. Skipping compilation." > compile_output.log
+        if ls ../*.cpp 1> /dev/null 2>&1; then
+          echo "Compiling C++ code..."
+          g++ -Wall -Wextra -o program ../*.cpp -lgtest -lgtest_main -pthread > compile_output.log 2>&1
+          echo "Compilation completed. Here is the output:"
+          cat compile_output.log  # Display the log content
         else
-          echo "Compiling the following files: $cpp_files"
-          g++ -Wall -Wextra -o program $cpp_files -lgtest -lgtest_main -pthread > compile_output.log 2>&1
-        fi
-        # Print the log in case of an error
-        cat compile_output.log
-        if [ $? -ne 0 ]; then
-          echo "Compilation failed, exiting."
-          exit 1
+          echo "No .cpp files found. Skipping compilation." > compile_output.log
         fi
 
     # Upload compilation logs as artifacts
