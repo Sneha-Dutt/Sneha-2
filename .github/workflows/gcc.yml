@@ -1,4 +1,5 @@
-name: Compile Code with GCC
+# Pipeline 1: Compile code and list warnings
+name: Build and Compile Pipeline
 
 on:
   push:
@@ -11,20 +12,21 @@ on:
 jobs:
   compile:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    # Checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Install g++
-        run: sudo apt-get install -y g++
+    # Install GCC and dependencies
+    - name: Install GCC and dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc g++
 
-      - name: Compile Code with g++ and List Warnings
-        run: |
-          g++ -Wall -Wextra -o test_addition addition.cpp  # Use g++ instead of gcc
-          if [ $? -ne 0 ]; then exit 1; fi  # Fail if compilation fails
-
-      - name: Upload Compilation Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: compile-artifacts
-          path: ./test_addition  # Adjust path for your compiled artifact
+    # Compile the code with warnings
+    - name: Compile and list warnings
+      run: |
+        mkdir build
+        cd build
+        gcc -Wall -Wextra -o program ../src/*.c

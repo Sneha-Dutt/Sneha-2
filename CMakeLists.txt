@@ -1,21 +1,20 @@
 cmake_minimum_required(VERSION 3.10)
-
-project(AdditionTest)
+project(AddNumbers)
 
 # Enable testing
 enable_testing()
 
-# Set the C++ standard
-set(CMAKE_CXX_STANDARD 14)
+# Add source files
+add_executable(main main.cpp addNumbers.cpp)
 
-# Add GoogleTest subdirectory (you should download GoogleTest if you haven't yet)
-add_subdirectory(googletest)
+# Add GoogleTest
+find_package(GTest REQUIRED)
 
-# Add your source files
-add_executable(test_addition test_addition.cpp addition.cpp)
+# Add test files
+add_executable(runTests testToAddTwoNumbers.cpp addNumbers.cpp)
 
-# Link GoogleTest with your test executable
-target_link_libraries(test_addition gtest gtest_main)
+# Link GoogleTest libraries
+target_link_libraries(runTests GTest::GTest GTest::Main)
 
 # Add tests
-add_test(NAME AdditionTest COMMAND test_addition)
+add_test(NAME AddNumbersTest COMMAND runTests)
