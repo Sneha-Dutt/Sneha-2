@@ -13,5 +13,7 @@ int main() {
     // Just a basic example of using the Adder class
     int result = Adder::add(3, 5);
     std::cout << "Result: " << result << std::endl;
-    return 0;
+    int array[5];
+    return array[6];
+    //return 0;
 }
