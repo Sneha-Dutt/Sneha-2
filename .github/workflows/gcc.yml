@@ -39,7 +39,7 @@ jobs:
         ls -l ../  # List files in the parent directory for debugging
         if ls ../*.cpp 1> /dev/null 2>&1; then
           echo "Compiling C++ code..."
-          g++ -Wall -Wextra -o program ../*.cpp -lgtest -lgtest_main -pthread > compile_output.log 2>&1
+          g++ -v -Wall -Wextra -o program ../*.cpp -lgtest -lgtest_main -pthread > compile_output.log 2>&1
           echo "Compilation completed. Here is the output:"
           cat compile_output.log  # Display the log content
         else
